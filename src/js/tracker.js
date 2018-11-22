@@ -81,6 +81,8 @@
 	 * 19. discoverRootDomain, false
 	 * 20. cookieLifetime, 63072000
 	 * 21. stateStorageStrategy, 'cookieAndLocalStorage'
+	 * 22. userFingerprintValue, null
+	 * 23. trackerVersion, null
 	 */
 	object.Tracker = function Tracker(functionName, namespace, version, mutSnowplowState, argmap) {
 
@@ -219,7 +221,9 @@
 				getSnowplowCookieName('testcookie')),
 
 			// Visitor fingerprint
-			userFingerprint = (argmap.userFingerprint === false) ? '' : detectors.detectSignature(configUserFingerprintHashSeed),
+			userFingerprint = (argmap.userFingerprint === false) ? '' : (argmap.userFingerprintValue ? argmap.userFingerprintValue : detectors.detectSignature(configUserFingerprintHashSeed)),
+
+			version = (argmap.trackerVersion ? argmap.trackerVersion : version),
 
 			// Unique ID for the tracker instance used to mark links which are being tracked
 			trackerId = functionName + '_' + namespace,
@@ -1829,6 +1833,14 @@
 				if (!enable) {
 					userFingerprint = '';
 				}
+			},
+
+			/**
+			* Set custom user fingerprintValue.
+			* @param fingerprint value
+			*/
+			setUserFingerprint: function(fingerprint) {
+				userFingerprint = fingerprint;
 			},
 
 			/**
